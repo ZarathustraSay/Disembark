@@ -1,0 +1,174 @@
+.protyle-wysiwyg .list[custom-f~=kb],
+.protyle-wysiwyg .list[custom-list2="kanban"] {
+    --kbline-boarditem-minwidth: 14rem;
+    /*看板列的最小宽度*/
+}
+
+/*————————————————————列表转看板————————————————————*/
+
+/* 只对最顶级列表应用看板布局 */
+.protyle-wysiwyg [data-type="NodeList"][custom-f~=kb],
+.protyle-wysiwyg [data-type="NodeList"][custom-list2="kanban"] {
+    display: flex;
+    flex-direction: row;
+    width: 100% !important;
+    overflow-x: auto;
+    /*溢出滚动*/
+    padding-bottom: 50px;
+
+    /* 直接子项目（顶级列表项） */
+    >[data-type="NodeListItem"] {
+        display: block;
+        flex: 1 0 var(--kbline-boarditem-minwidth);
+        min-width: var(--kbline-boarditem-minwidth);
+        box-sizing: border-box;
+        border-radius: 3px;
+        margin-right: 10px;
+
+        /* 移除顶级列表项的竖线 */
+        &:before {
+            display: none;
+        }
+
+        /* 顶级列表项的第一个内容块样式 */
+        >.protyle-action+[data-node-id] {
+            /* width: 100%; */
+            min-width: 0;
+            box-sizing: border-box;
+            border-radius: 3px;
+            padding: 9px 15px 11px 15px;
+            margin-bottom: 10px;
+        }
+
+        /* 如果第一个内容块是标题 */
+        >.protyle-action+[data-node-id][data-type="NodeHeading"] {
+            padding: 5px 15px 7px 15px;
+        }
+
+        /* 调整顶级列表项的点位置 */
+        >.protyle-action {
+            transform: translate(4px, 5px);
+            z-index: 2;
+        }
+
+        /* 子列表保持正常样式 */
+        [data-type="NodeList"] {
+            display: block;
+            flex-direction: column;
+            width: auto;
+            max-width: 100%;
+            box-sizing: border-box;
+            overflow-x: visible;
+            padding-bottom: 0;
+
+            /* 恢复子列表的正常样式 */
+            [data-type="NodeListItem"] {
+                min-width: auto;
+                border-radius: 0;
+                margin-right: 0;
+                background-color: var(--b3-theme-background);
+
+                /* 恢复子列表项的竖线 */
+                &:before {
+                    display: block;
+                }
+
+                >.protyle-action {
+                    transform: none;
+                    z-index: auto;
+                }
+            }
+        }
+
+        /* 图片和代码块只占用当前列宽，避免单个内容把列撑宽 */
+        [data-node-id],
+        .img,
+        .img img {
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        .img img {
+            height: auto;
+        }
+
+    }
+}
+
+/* 导出 PDF/预览时自动换行，避免横向滚动条被导出 */
+#preview .protyle-wysiwyg [data-type="NodeList"][custom-f~=kb],
+#preview .protyle-wysiwyg [data-type="NodeList"][custom-list2="kanban"] {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--kbline-boarditem-minwidth)), 1fr));
+    gap: 10px;
+    overflow-x: visible;
+    padding-bottom: 0;
+}
+
+#preview .protyle-wysiwyg [data-type="NodeList"][custom-f~=kb]>[data-type="NodeListItem"],
+#preview .protyle-wysiwyg [data-type="NodeList"][custom-list2="kanban"]>[data-type="NodeListItem"] {
+    min-width: 0;
+    margin-right: 0;
+}
+
+#preview .protyle-wysiwyg [data-type="NodeList"][custom-f~=kb]>[data-type="NodeListItem"] [data-node-id].code-block,
+#preview .protyle-wysiwyg [data-type="NodeList"][custom-list2="kanban"]>[data-type="NodeListItem"] [data-node-id].code-block,
+#preview .protyle-wysiwyg [data-type="NodeList"][custom-f~=kb]>[data-type="NodeListItem"] [data-node-id].code-block .hljs,
+#preview .protyle-wysiwyg [data-type="NodeList"][custom-list2="kanban"]>[data-type="NodeListItem"] [data-node-id].code-block .hljs {
+    overflow-x: visible;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+/* 标题行循环颜色 - 只对顶级列表项生效 */
+.protyle-wysiwyg [data-type="NodeList"][custom-f~=kb]>[data-type="NodeListItem"]:nth-child(4n-3)>.protyle-action+[data-node-id],
+.protyle-wysiwyg [data-type="NodeList"][custom-list2="kanban"]>[data-type="NodeListItem"]:nth-child(4n-3)>.protyle-action+[data-node-id] {
+    background-color: var(--b3-card-error-background);
+}
+
+.protyle-wysiwyg [data-type="NodeList"][custom-f~=kb]>[data-type="NodeListItem"]:nth-child(4n-2)>.protyle-action+[data-node-id],
+.protyle-wysiwyg [data-type="NodeList"][custom-list2="kanban"]>[data-type="NodeListItem"]:nth-child(4n-2)>.protyle-action+[data-node-id] {
+    background-color: var(--b3-card-warning-background);
+}
+
+.protyle-wysiwyg [data-type="NodeList"][custom-f~=kb]>[data-type="NodeListItem"]:nth-child(4n-1)>.protyle-action+[data-node-id],
+.protyle-wysiwyg [data-type="NodeList"][custom-list2="kanban"]>[data-type="NodeListItem"]:nth-child(4n-1)>.protyle-action+[data-node-id] {
+    background-color: var(--b3-card-info-background);
+}
+
+.protyle-wysiwyg [data-type="NodeList"][custom-f~=kb]>[data-type="NodeListItem"]:nth-child(4n)>.protyle-action+[data-node-id],
+.protyle-wysiwyg [data-type="NodeList"][custom-list2="kanban"]>[data-type="NodeListItem"]:nth-child(4n)>.protyle-action+[data-node-id] {
+    background-color: var(--b3-card-success-background);
+}
+
+/* 取消标题层级提示 - 只对顶级列表项生效 */
+.protyle-wysiwyg [data-type="NodeList"][custom-f~=kb]>[data-type="NodeListItem"] [data-type="NodeHeading"]>[spellcheck="false"]:after,
+.protyle-wysiwyg [data-type="NodeList"][custom-list2="kanban"]>[data-type="NodeListItem"] [data-type="NodeHeading"]>[spellcheck="false"]:after {
+    display: none;
+}
+
+/* 引用计数 - 只对顶级列表生效 */
+.protyle-wysiwyg [data-type="NodeList"][custom-f~=kb]>[data-type="NodeListItem"] .protyle-attr--refcount,
+.protyle-wysiwyg [data-type="NodeList"][custom-list2="kanban"]>[data-type="NodeListItem"] .protyle-attr--refcount {
+    height: 14px;
+    width: 14px;
+    left: -44px;
+    top: 9px;
+    padding: 0;
+    line-height: 14px;
+    text-align: center;
+}
+
+/* 子列表的引用计数保持正常位置 */
+.protyle-wysiwyg [data-type="NodeList"][custom-f~=kb] [data-type="NodeList"] .protyle-attr--refcount,
+.protyle-wysiwyg [data-type="NodeList"][custom-list2="kanban"] [data-type="NodeList"] .protyle-attr--refcount {
+    height: 14px;
+    width: 14px;
+    left: -14px;
+    top: 9px;
+    padding: 0;
+    line-height: 14px;
+    text-align: center;
+}
+
+/*————————————————————列表转化看板 END————————————————————*/
